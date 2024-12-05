@@ -1,7 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { runPart } from "@macil/aocd";
 import { CharacterGrid } from "./grid/grid.ts";
-import { allNeighbors } from "./grid/vector.ts";
+import { allNeighbors, Vector } from "./grid/vector.ts";
 
 function part1(input: string): number {
   const grid = CharacterGrid.fromString(input);
@@ -18,14 +18,34 @@ function part1(input: string): number {
     .reduce((count) => count + 1, 0);
 }
 
-// function part2(input: string): number {
-//   const items = parse(input);
-//   throw new Error("TODO");
-// }
+function part2(input: string): number {
+  const grid = CharacterGrid.fromString(input);
+  return grid.valuesWithLocations()
+    .filter(({ value, location }) => {
+      if (value !== "A") return false;
+
+      for (const hOffset of [-1, 1]) {
+        const upCorner = grid.get(
+          location.add(Vector.upward(1).add(Vector.rightward(hOffset))),
+        );
+        if (upCorner === undefined || !["M", "S"].includes(upCorner)) {
+          return false;
+        }
+        const downCorner = grid.get(
+          location.add(Vector.downward(1).add(Vector.leftward(hOffset))),
+        );
+        const expectedDownCorner = upCorner === "M" ? "S" : "M";
+        if (downCorner !== expectedDownCorner) return false;
+      }
+
+      return true;
+    })
+    .reduce((count) => count + 1, 0);
+}
 
 if (import.meta.main) {
   runPart(2024, 4, 1, part1);
-  // runPart(2024, 4, 2, part2);
+  runPart(2024, 4, 2, part2);
 }
 
 const TEST_INPUT = `\
@@ -45,6 +65,6 @@ Deno.test("part1", () => {
   assertEquals(part1(TEST_INPUT), 18);
 });
 
-// Deno.test("part2", () => {
-//   assertEquals(part2(TEST_INPUT), 12);
-// });
+Deno.test("part2", () => {
+  assertEquals(part2(TEST_INPUT), 9);
+});
