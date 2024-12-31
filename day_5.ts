@@ -48,14 +48,40 @@ function part1(input: string): number {
     .reduce((a, b) => a + b, 0);
 }
 
-// function part2(input: string): number {
-//   const items = parse(input);
-//   throw new Error("TODO");
-// }
+function fixUpdate(rules: Array<Rule>, update: Array<number>): Array<number> {
+  update = update.slice();
+
+  outer: while (true) {
+    for (const rule of rules) {
+      const xIndex = update.indexOf(rule.x);
+      const yIndex = update.indexOf(rule.y);
+      if (xIndex === -1 || yIndex === -1) {
+        continue;
+      }
+      if (xIndex > yIndex) {
+        const x = update[xIndex];
+        const y = update[yIndex];
+        update[xIndex] = y;
+        update[yIndex] = x;
+        continue outer;
+      }
+    }
+    return update;
+  }
+}
+
+function part2(input: string): number {
+  const inputData = parse(input);
+  return inputData.updates
+    .filter((update) => !checkRules(inputData.rules, update))
+    .map((update) => fixUpdate(inputData.rules, update))
+    .map((update) => pickMiddlePage(update))
+    .reduce((a, b) => a + b, 0);
+}
 
 if (import.meta.main) {
   runPart(2024, 5, 1, part1);
-  // runPart(2024, 5, 2, part2);
+  runPart(2024, 5, 2, part2);
 }
 
 const TEST_INPUT = `\
@@ -93,6 +119,6 @@ Deno.test("part1", () => {
   assertEquals(part1(TEST_INPUT), 143);
 });
 
-// Deno.test("part2", () => {
-//   assertEquals(part2(TEST_INPUT), 12);
-// });
+Deno.test("part2", () => {
+  assertEquals(part2(TEST_INPUT), 123);
+});
