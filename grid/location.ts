@@ -36,4 +36,17 @@ export class Location {
   equals(other: Location): boolean {
     return this.row === other.row && this.column === other.column;
   }
+
+  static fromString(input: string): Location {
+    const [row, column] = input.split(",").map(Number);
+    return new Location(row, column);
+  }
+
+  toString(): string {
+    return `${this.row},${this.column}`;
+  }
+
+  clone(): Location {
+    return new Location(this.row, this.column);
+  }
 }

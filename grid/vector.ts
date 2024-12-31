@@ -52,6 +52,10 @@ export class Vector {
   equals(other: Vector): boolean {
     return this.rows === other.rows && this.columns === other.columns;
   }
+
+  clone(): Vector {
+    return new Vector(this.rows, this.columns);
+  }
 }
 
 export const orthogonalNeighbors: () => ReadonlyArray<Vector> = once(() => [
