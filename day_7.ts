@@ -23,6 +23,7 @@ type Operator = (a: number, b: number) => number;
 const OPERATORS = {
   "+": (a: number, b: number) => a + b,
   "*": (a: number, b: number) => a * b,
+  "||": (a: number, b: number) => Number(String(a) + String(b)),
 } satisfies Record<string, Operator>;
 
 type OperatorName = keyof typeof OPERATORS;
@@ -37,10 +38,13 @@ function applyOperators(operators: OperatorName[], operands: number[]): number {
   );
 }
 
-function checkItemCanBeTrue(item: Item): boolean {
+function checkItemCanBeTrue(
+  item: Item,
+  operatorNames: OperatorName[] = Object.keys(OPERATORS) as OperatorName[],
+): boolean {
   const p = new Array<OperatorName[]>(
     item.operands.length - 1,
-  ).fill(Object.keys(OPERATORS) as OperatorName[]);
+  ).fill(operatorNames);
   const allOperatorCombinations = bigCartesian(
     p,
   );
@@ -56,19 +60,22 @@ function checkItemCanBeTrue(item: Item): boolean {
 function part1(input: string): number {
   const items = parse(input);
   return items
-    .filter(checkItemCanBeTrue)
+    .filter((item) => checkItemCanBeTrue(item, ["+", "*"]))
     .map((item) => item.result)
     .reduce((a, b) => a + b, 0);
 }
 
-// function part2(input: string): number {
-//   const items = parse(input);
-//   throw new Error("TODO");
-// }
+function part2(input: string): number {
+  const items = parse(input);
+  return items
+    .filter((item) => checkItemCanBeTrue(item))
+    .map((item) => item.result)
+    .reduce((a, b) => a + b, 0);
+}
 
 if (import.meta.main) {
   runPart(2024, 7, 1, part1);
-  // runPart(2024, 7, 2, part2);
+  runPart(2024, 7, 2, part2);
 }
 
 const TEST_INPUT = `\
@@ -87,6 +94,6 @@ Deno.test("part1", () => {
   assertEquals(part1(TEST_INPUT), 3749);
 });
 
-// Deno.test("part2", () => {
-//   assertEquals(part2(TEST_INPUT), 12);
-// });
+Deno.test("part2", () => {
+  assertEquals(part2(TEST_INPUT), 11387);
+});
