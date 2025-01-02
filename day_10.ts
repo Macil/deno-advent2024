@@ -1,5 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { dijkstraAll } from "lazy-pathfinding/directed/dijkstra";
+import { countPaths } from "lazy-pathfinding/directed/count_paths";
 import { runPart } from "@macil/aocd";
 import { ArrayGrid } from "./grid/grid.ts";
 import { orthogonalNeighbors, Vector } from "./grid/vector.ts";
@@ -47,14 +48,33 @@ function part1(input: string): number {
     .reduce((a, b) => a + b, 0);
 }
 
-// function part2(input: string): number {
-//   const grid = parse(input);
-//   throw new Error("TODO");
-// }
+function rateTrailhead(
+  grid: ArrayGrid<number | undefined>,
+  trailhead: Location,
+): number {
+  return countPaths({
+    start: trailhead,
+    successors: (location) =>
+      orthogonalNeighbors()
+        .map((neighbor) => location.add(neighbor))
+        .filter((neighborLocation) =>
+          grid.get(neighborLocation) === grid.get(location)! + 1
+        ),
+    success: (location) => grid.get(location) === 9,
+  });
+}
+
+function part2(input: string): number {
+  const grid = parse(input);
+  const trailheads = getTrailheads(grid);
+  return trailheads
+    .map((trailhead) => rateTrailhead(grid, trailhead))
+    .reduce((a, b) => a + b, 0);
+}
 
 if (import.meta.main) {
   runPart(2024, 10, 1, part1);
-  // runPart(2024, 10, 2, part2);
+  runPart(2024, 10, 2, part2);
 }
 
 const TEST_INPUT = `\
@@ -72,6 +92,6 @@ Deno.test("part1", () => {
   assertEquals(part1(TEST_INPUT), 36);
 });
 
-// Deno.test("part2", () => {
-//   assertEquals(part2(TEST_INPUT), 12);
-// });
+Deno.test("part2", () => {
+  assertEquals(part2(TEST_INPUT), 81);
+});
