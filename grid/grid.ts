@@ -91,7 +91,7 @@ export class ArrayGrid<T> extends FixedSizeGrid<T> implements MutableGrid<T> {
   static createWithInitialValue<T>(
     dimensions: Vector,
     initialValue: T,
-  ): FixedSizeGrid<T> {
+  ): ArrayGrid<T> {
     return new ArrayGrid(
       dimensions,
       Array.from(

@@ -51,12 +51,11 @@ function doesPathLoopFromPosition(
   guardLocation: Location,
   guardDirection: Direction,
 ): boolean {
-  const tempDirectionsTraveledPerCell = new ArrayGrid<Set<Direction>>(
+  const tempDirectionsTraveledPerCell = ArrayGrid.createWithInitialValue<
+    Set<Direction> | undefined
+  >(
     grid.dimensions,
-    Array.from(
-      { length: grid.dimensions.rows },
-      () => Array.from({ length: grid.dimensions.columns }, () => new Set()),
-    ),
+    undefined,
   );
   for (
     const [currentGuardLocation, currentGuardDirection] of guardLocations(
@@ -65,9 +64,16 @@ function doesPathLoopFromPosition(
       guardDirection,
     )
   ) {
-    const directionsTraveledInCurrentCell = tempDirectionsTraveledPerCell.get(
+    let directionsTraveledInCurrentCell = tempDirectionsTraveledPerCell.get(
       currentGuardLocation,
-    )!;
+    );
+    if (!directionsTraveledInCurrentCell) {
+      directionsTraveledInCurrentCell = new Set();
+      tempDirectionsTraveledPerCell.set(
+        currentGuardLocation,
+        directionsTraveledInCurrentCell,
+      );
+    }
     if (
       directionsTraveledInCurrentCell.has(currentGuardDirection) ||
       existingDirectionsTraveledPerCell.get(currentGuardLocation)!
