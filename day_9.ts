@@ -53,18 +53,15 @@ function part1(input: string): number {
     const lastFileSpanIndex = spans.findLastIndex(({ fileId }) =>
       fileId !== undefined
     );
-    const firstFreeSpanIndex = spans.findIndex(({ fileId }) =>
-      fileId === undefined
-    );
-    if (
-      lastFileSpanIndex === -1 ||
-      firstFreeSpanIndex === -1 ||
-      lastFileSpanIndex < firstFreeSpanIndex
-    ) {
+    const firstFreeSpanIndex = spans.slice(0, lastFileSpanIndex).findIndex((
+      { fileId },
+    ) => fileId === undefined);
+    if (lastFileSpanIndex === -1 || firstFreeSpanIndex === -1) {
       break;
     }
     const lastFileSpan = spans[lastFileSpanIndex];
     const firstFreeSpan = spans[firstFreeSpanIndex];
+
     if (firstFreeSpan.length === lastFileSpan.length) {
       firstFreeSpan.fileId = lastFileSpan.fileId;
       lastFileSpan.fileId = undefined;
@@ -89,14 +86,44 @@ function part1(input: string): number {
   return checksumSpans(spans);
 }
 
-// function part2(input: string): number {
-//   const spans = parse(input);
-//   throw new Error("TODO");
-// }
+function part2(input: string): number {
+  const spans = parseDiskMap(input);
+  const highestFileId = spans.findLast(({ fileId }) => fileId !== undefined)
+    ?.fileId;
+  if (highestFileId === undefined) {
+    throw new Error("No file spans found");
+  }
+  for (let fileId = highestFileId; fileId >= 0; fileId--) {
+    const fileSpanIndex = spans.findLastIndex((span) => span.fileId === fileId);
+    const fileSpan = spans[fileSpanIndex];
+    const freeSpanIndex = spans.slice(0, fileSpanIndex).findIndex((span) =>
+      span.fileId === undefined && span.length >= fileSpan.length
+    );
+    if (freeSpanIndex === -1) {
+      continue;
+    }
+    const freeSpan = spans[freeSpanIndex];
+
+    if (freeSpan.length === fileSpan.length) {
+      freeSpan.fileId = fileId;
+      fileSpan.fileId = undefined;
+    } else { // freeSpan.length > fileSpan.length
+      const newEmptySpanLength = freeSpan.length - fileSpan.length;
+      freeSpan.length = fileSpan.length;
+      freeSpan.fileId = fileId;
+      fileSpan.fileId = undefined;
+      spans.splice(freeSpanIndex + 1, 0, {
+        length: newEmptySpanLength,
+        fileId: undefined,
+      });
+    }
+  }
+  return checksumSpans(spans);
+}
 
 if (import.meta.main) {
   runPart(2024, 9, 1, part1);
-  // runPart(2024, 9, 2, part2);
+  runPart(2024, 9, 2, part2);
 }
 
 const TEST_INPUT = `\
@@ -121,6 +148,6 @@ Deno.test("part1", () => {
   assertEquals(part1(TEST_INPUT), 1928);
 });
 
-// Deno.test("part2", () => {
-//   assertEquals(part2(TEST_INPUT), 12);
-// });
+Deno.test("part2", () => {
+  assertEquals(part2(TEST_INPUT), 2858);
+});
