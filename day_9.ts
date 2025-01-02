@@ -53,12 +53,11 @@ function part1(input: string): number {
     const lastFileSpanIndex = spans.findLastIndex(({ fileId }) =>
       fileId !== undefined
     );
+    if (lastFileSpanIndex === -1) break;
     const firstFreeSpanIndex = spans.slice(0, lastFileSpanIndex).findIndex((
       { fileId },
     ) => fileId === undefined);
-    if (lastFileSpanIndex === -1 || firstFreeSpanIndex === -1) {
-      break;
-    }
+    if (firstFreeSpanIndex === -1) break;
     const lastFileSpan = spans[lastFileSpanIndex];
     const firstFreeSpan = spans[firstFreeSpanIndex];
 
@@ -99,9 +98,7 @@ function part2(input: string): number {
     const freeSpanIndex = spans.slice(0, fileSpanIndex).findIndex((span) =>
       span.fileId === undefined && span.length >= fileSpan.length
     );
-    if (freeSpanIndex === -1) {
-      continue;
-    }
+    if (freeSpanIndex === -1) continue;
     const freeSpan = spans[freeSpanIndex];
 
     if (freeSpan.length === fileSpan.length) {
