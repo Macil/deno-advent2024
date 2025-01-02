@@ -23,7 +23,8 @@
     "jsr:@std/path@^1.0.6": "1.0.8",
     "jsr:@std/text@~1.0.7": "1.0.8",
     "npm:@types/node@*": "22.4.2",
-    "npm:big-cartesian@^6.1.0": "6.1.0"
+    "npm:big-cartesian@^6.1.0": "6.1.0",
+    "npm:lazy-pathfinding@^1.1.1": "1.1.1"
   },
   "jsr": {
     "@alexreardon/limit-once@0.8.0": {
@@ -138,6 +139,9 @@
     "big-cartesian@6.1.0": {
       "integrity": "sha512-MzadZETTa7Q/QkJvovK62j1qFNQ+pK9NaldrSU9HkfXSnb5v4niVFwSVUgy6R1yRLMxjYmBLdEZHgA1dv9EljQ=="
     },
+    "lazy-pathfinding@1.1.1": {
+      "integrity": "sha512-W8NDXC2BogNzAIKc+STfGKrETtHOpcU+KvKwlknzUqoLLtzel1Yo9pIa4Ky1+g3WUpWHiG11ygmTo+2derFNVA=="
+    },
     "undici-types@6.19.8": {
       "integrity": "sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw=="
     }
@@ -149,7 +153,8 @@
       "jsr:@macil/aocd@^2.0.1",
       "jsr:@std/assert@^1.0.6",
       "jsr:@std/collections@^1.0.9",
-      "npm:big-cartesian@^6.1.0"
+      "npm:big-cartesian@^6.1.0",
+      "npm:lazy-pathfinding@^1.1.1"
     ]
   }
 }
