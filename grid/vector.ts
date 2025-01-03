@@ -49,6 +49,13 @@ export class Vector {
     return new Vector(this.rows * scalar, this.columns * scalar);
   }
 
+  modulo(other: Vector): Vector {
+    return new Vector(
+      ((this.rows % other.rows) + other.rows) % other.rows,
+      ((this.columns % other.columns) + other.columns) % other.columns,
+    );
+  }
+
   reverse(): Vector {
     return new Vector(-this.rows, -this.columns);
   }

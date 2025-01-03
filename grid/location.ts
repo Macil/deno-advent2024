@@ -33,6 +33,13 @@ export class Location {
     return this.add(Vector.inDirection(direction, distance));
   }
 
+  modulo(other: Vector): Location {
+    return new Location(
+      ((this.row % other.rows) + other.rows) % other.rows,
+      ((this.column % other.columns) + other.columns) % other.columns,
+    );
+  }
+
   equals(other: Location): boolean {
     return this.row === other.row && this.column === other.column;
   }
