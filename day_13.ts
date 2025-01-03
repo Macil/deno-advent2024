@@ -62,14 +62,24 @@ function part1(input: string): number {
     .reduce((a, b) => a + b, 0);
 }
 
-// function part2(input: string): number {
-//   const machines = parse(input);
-//   throw new Error("TODO");
-// }
+function part2(input: string): number {
+  const machines = parse(input);
+  return machines
+    .map((machine) => ({
+      ...machine,
+      prize: {
+        x: machine.prize.x + 10000000000000,
+        y: machine.prize.y + 10000000000000,
+      },
+    }))
+    .map(calculateTokensToSolve)
+    .filter((t) => t != undefined)
+    .reduce((a, b) => a + b, 0);
+}
 
 if (import.meta.main) {
   runPart(2024, 13, 1, part1);
-  // runPart(2024, 13, 2, part2);
+  runPart(2024, 13, 2, part2);
 }
 
 const TEST_INPUT = `\
@@ -94,6 +104,6 @@ Deno.test("part1", () => {
   assertEquals(part1(TEST_INPUT), 480);
 });
 
-// Deno.test("part2", () => {
-//   assertEquals(part2(TEST_INPUT), 12);
-// });
+Deno.test("part2", () => {
+  assertEquals(part2(TEST_INPUT), 875318608908);
+});
