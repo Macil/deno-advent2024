@@ -36,8 +36,8 @@ function calculateTokensToSolve(machine: ClawMachine): number | undefined {
 
   const X = math.lusolve(A, B);
 
-  const aPresses = Number(math.subset(X, math.index(0, 0)));
-  const bPresses = Number(math.subset(X, math.index(1, 0)));
+  const aPresses = X.get([0, 0]) as number;
+  const bPresses = X.get([1, 0]) as number;
 
   const aRounded = Math.round(aPresses);
   const bRounded = Math.round(bPresses);
