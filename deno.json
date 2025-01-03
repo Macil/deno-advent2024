@@ -15,6 +15,7 @@
     "@std/assert": "jsr:@std/assert@^1.0.6",
     "@std/collections": "jsr:@std/collections@^1.0.9",
     "big-cartesian": "npm:big-cartesian@^6.1.0",
-    "lazy-pathfinding": "npm:lazy-pathfinding@^1.1.1"
+    "lazy-pathfinding": "npm:lazy-pathfinding@^1.1.1",
+    "mathjs": "npm:mathjs@^14.0.1"
   }
 }
