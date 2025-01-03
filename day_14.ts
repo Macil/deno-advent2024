@@ -1,7 +1,11 @@
 import { assertEquals } from "@std/assert";
-import { runPart } from "@macil/aocd";
+import { getAocd, runPart } from "@macil/aocd";
 import { Location } from "./grid/location.ts";
 import { Vector } from "./grid/vector.ts";
+import { ArrayGrid } from "./grid/grid.ts";
+import * as math from "mathjs";
+
+const defaultWorldDimensions = new Vector(103, 101);
 
 interface Robot {
   position: Location;
@@ -64,20 +68,75 @@ function calculateSafetyFactor(
     .reduce((a, b) => a * b, 1);
 }
 
-function part1(input: string, worldDimensions = new Vector(103, 101)): number {
+function part1(
+  input: string,
+  worldDimensions = defaultWorldDimensions,
+): number {
   const robots = parse(input);
   runBots(robots, 100, worldDimensions);
   return calculateSafetyFactor(robots, worldDimensions);
 }
 
-// function part2(input: string): number {
-//   const robots = parse(input);
-//   throw new Error("TODO");
-// }
+function renderRobots(robots: Robot[], worldDimensions: Vector) {
+  const grid = ArrayGrid.createWithInitialValue(worldDimensions, 0);
+  for (const robot of robots) {
+    grid.set(robot.position, grid.get(robot.position)! + 1);
+  }
+  const resultParts = [];
+  const location = new Location(0, 0);
+  for (
+    location.row = 0;
+    location.row < worldDimensions.rows;
+    location.row++
+  ) {
+    for (
+      location.column = 0;
+      location.column < worldDimensions.columns;
+      location.column++
+    ) {
+      const count = grid.get(location)!;
+      resultParts.push(count === 0 ? "." : count);
+    }
+    resultParts.push("\n");
+  }
+  return resultParts.join("");
+}
+
+function botsToMatrix(robots: Robot[], worldDimensions: Vector): math.Matrix {
+  const matrix = math.zeros(
+    worldDimensions.columns,
+    worldDimensions.rows,
+  ) as math.Matrix;
+  for (const robot of robots) {
+    const index = [robot.position.column, robot.position.row];
+    matrix.set(index, matrix.get(index) as number + 1);
+  }
+  return matrix;
+}
+
+function part2(input: string): number {
+  const robots = parse(input);
+  let time = 0;
+  while (true) {
+    const matrix = botsToMatrix(robots, defaultWorldDimensions);
+    const max = Number(math.max(matrix));
+    if (max === 1) {
+      return time;
+    }
+    runBots(robots, 1, defaultWorldDimensions);
+    time++;
+  }
+}
 
 if (import.meta.main) {
-  runPart(2024, 14, 1, part1);
-  // runPart(2024, 14, 2, part2);
+  if (Deno.args[0] === "--show") {
+    const robots = parse(await getAocd().getInput(2024, 14));
+    runBots(robots, Number(Deno.args[1]), defaultWorldDimensions);
+    console.log(renderRobots(robots, defaultWorldDimensions));
+  } else {
+    runPart(2024, 14, 1, part1);
+    runPart(2024, 14, 2, part2);
+  }
 }
 
 const TEST_INPUT = `\
@@ -98,7 +157,3 @@ p=9,5 v=-3,-3
 Deno.test("part1", () => {
   assertEquals(part1(TEST_INPUT, new Vector(7, 11)), 12);
 });
-
-// Deno.test("part2", () => {
-//   assertEquals(part2(TEST_INPUT), 12);
-// });
