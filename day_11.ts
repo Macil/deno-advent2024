@@ -18,30 +18,41 @@ function changeStone(stone: number): number[] {
   return [stone * 2024];
 }
 
-function changeStones(stones: number[]): number[] {
-  return stones.flatMap(changeStone);
+function changeStones(stonesMap: Map<number, number>): Map<number, number> {
+  const result = new Map<number, number>();
+  for (const [stone, count] of stonesMap) {
+    for (const newStone of changeStone(stone)) {
+      result.set(newStone, (result.get(newStone) ?? 0) + count);
+    }
+  }
+  return result;
 }
 
-function changeStonesNTimes(stones: number[], n: number): number[] {
-  for (let i = 0; i < n; i++) {
-    stones = changeStones(stones);
+/** @returns final stone count */
+function changeStonesNTimes(stones: number[], n: number): number {
+  let stonesMap = new Map<number, number>();
+  for (const stone of stones) {
+    stonesMap.set(stone, (stonesMap.get(stone) ?? 0) + 1);
   }
-  return stones;
+  for (let i = 0; i < n; i++) {
+    stonesMap = changeStones(stonesMap);
+  }
+  return stonesMap.values().reduce((sum, count) => sum + count, 0);
 }
 
 function part1(input: string): number {
   const stones = parse(input);
-  return changeStonesNTimes(stones, 25).length;
+  return changeStonesNTimes(stones, 25);
 }
 
-// function part2(input: string): number {
-//   const items = parse(input);
-//   throw new Error("TODO");
-// }
+function part2(input: string): number {
+  const stones = parse(input);
+  return changeStonesNTimes(stones, 75);
+}
 
 if (import.meta.main) {
   runPart(2024, 11, 1, part1);
-  // runPart(2024, 11, 2, part2);
+  runPart(2024, 11, 2, part2);
 }
 
 const TEST_INPUT = `125 17`;
@@ -50,6 +61,6 @@ Deno.test("part1", () => {
   assertEquals(part1(TEST_INPUT), 55312);
 });
 
-// Deno.test("part2", () => {
-//   assertEquals(part2(TEST_INPUT), 12);
-// });
+Deno.test("part2", () => {
+  assertEquals(part2(TEST_INPUT), 65601038650482);
+});
