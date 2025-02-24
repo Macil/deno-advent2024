@@ -142,3 +142,21 @@ export class ArrayGrid<T> extends FixedSizeGrid<T> implements MutableGrid<T> {
     }
   }
 }
+
+export function gridToString(grid: FixedSizeGrid<string>): string {
+  const parts = [];
+  const location = new Location(0, 0);
+  for (location.row = 0; location.row < grid.dimensions.rows; location.row++) {
+    for (
+      location.column = 0;
+      location.column < grid.dimensions.columns;
+      location.column++
+    ) {
+      parts.push(grid.get(location) ?? " ");
+    }
+    if (location.row < grid.dimensions.rows - 1) {
+      parts.push("\n");
+    }
+  }
+  return parts.join("");
+}
