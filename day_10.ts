@@ -3,14 +3,14 @@ import { dijkstraAll } from "lazy-pathfinding/directed/dijkstra";
 import { countPaths } from "lazy-pathfinding/directed/count_paths";
 import { runPart } from "@macil/aocd";
 import { ArrayGrid } from "./grid/grid.ts";
-import { orthogonalNeighbors, Vector } from "./grid/vector.ts";
+import { orthogonalNeighbors } from "./grid/vector.ts";
 import { Location } from "./grid/location.ts";
 
 function parse(input: string): ArrayGrid<number | undefined> {
   const data = input.trimEnd().split("\n").map((line) =>
     Array.from(line).map((chr) => (chr === "." ? undefined : Number(chr)))
   );
-  return new ArrayGrid(new Vector(data.length, data[0].length), data);
+  return ArrayGrid.fromRows(data);
 }
 
 function getTrailheads(

@@ -3,7 +3,6 @@ import { runPart } from "@macil/aocd";
 import { ArrayGrid, CharacterGrid, FixedSizeGrid, Grid } from "./grid/grid.ts";
 import { Location } from "./grid/location.ts";
 import { clockwise, Direction } from "./grid/direction.ts";
-import { Vector } from "./grid/vector.ts";
 
 function* guardLocations(
   grid: FixedSizeGrid<string>,
@@ -87,11 +86,7 @@ function doesPathLoopFromPosition(
 }
 
 function part2(input: string): number {
-  const inputLines = input.trimEnd().split("\n");
-  const grid = new ArrayGrid(
-    new Vector(inputLines.length, inputLines[0].length),
-    inputLines.map((line) => Array.from(line)),
-  );
+  const grid = ArrayGrid.fromString(input);
 
   const guardStartLocation = grid.valuesWithLocations()
     .find(({ value }) => value === "^")?.location;

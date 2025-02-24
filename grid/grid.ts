@@ -49,7 +49,7 @@ export class CharacterGrid extends FixedSizeGrid<string> {
 
   static fromString(input: string): CharacterGrid {
     const lines = input.trimEnd().split("\n");
-    const dimensions = new Vector(lines.length, lines[0].length);
+    const dimensions = new Vector(lines.length, lines[0]?.length ?? 0);
     const allRowsMatchColumnCount = lines.every((line) =>
       line.length === dimensions.columns
     );
@@ -86,6 +86,22 @@ export class ArrayGrid<T> extends FixedSizeGrid<T> implements MutableGrid<T> {
   constructor(dimensions: Vector, values: Array<Array<T>>) {
     super(dimensions);
     this.#values = values;
+  }
+
+  static fromString(input: string): ArrayGrid<string> {
+    const lines = input.trimEnd().split("\n");
+    return ArrayGrid.fromRows(lines.map((line) => Array.from(line)));
+  }
+
+  static fromRows<T>(values: Array<Array<T>>): ArrayGrid<T> {
+    const dimensions = new Vector(values.length, values[0]?.length ?? 0);
+    const allRowsMatchColumnCount = values.every((row) =>
+      row.length === dimensions.columns
+    );
+    if (!allRowsMatchColumnCount) {
+      throw new Error("All rows must have the same length");
+    }
+    return new ArrayGrid(dimensions, values);
   }
 
   static createWithInitialValue<T>(
