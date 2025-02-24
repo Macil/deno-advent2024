@@ -1,7 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { runPart } from "@macil/aocd";
 import { Location } from "./grid/location.ts";
-import { ArrayGrid } from "./grid/grid.ts";
+import { ArrayGrid, gridToString } from "./grid/grid.ts";
 import { Direction } from "./grid/direction.ts";
 
 interface World {
@@ -14,6 +14,24 @@ interface Problem {
   instructions: Direction[];
 }
 
+function parseInstructions(instructionsString: string): Direction[] {
+  return Array.from(instructionsString)
+    .filter((c) => c !== "\n")
+    .map((c) => {
+      switch (c) {
+        case "^":
+          return "up";
+        case "v":
+          return "down";
+        case "<":
+          return "left";
+        case ">":
+          return "right";
+      }
+      throw new Error(`Invalid direction: ${JSON.stringify(c)}`);
+    });
+}
+
 function parse(input: string): Problem {
   const [gridPart, instructionsPart] = input.trimEnd().split("\n\n");
   const grid = ArrayGrid.fromString(gridPart);
@@ -21,57 +39,77 @@ function parse(input: string): Problem {
     grid.valuesWithLocations().find(({ value }) => value === "@")!.location;
   return {
     world: { grid, robot },
-    instructions: Array.from(instructionsPart)
-      .filter((c) => c !== "\n")
-      .map((c) => {
-        switch (c) {
-          case "^":
-            return "up";
-          case "v":
-            return "down";
-          case "<":
-            return "left";
-          case ">":
-            return "right";
-        }
-        throw new Error(`Invalid direction: ${JSON.stringify(c)}`);
-      }),
+    instructions: parseInstructions(instructionsPart),
   };
 }
 
-function attemptPush(
-  world: World,
-  location: Location,
-  direction: Direction,
-): boolean {
-  const destination = location.relative(direction, 1);
-  const destinationValue = world.grid.get(destination);
+function push(world: World, location: Location, direction: Direction) {
+  const locationsToPush = new Set<string>();
 
-  let canPush = false;
-  if (destinationValue === ".") {
-    canPush = true;
-  } else if (destinationValue === "O") {
-    canPush = attemptPush(world, destination, direction);
+  const isVertical = ["up", "down"].includes(direction);
+
+  function addLocationToPush(location: Location) {
+    locationsToPush.add(location.toString());
+    const locationValue = world.grid.get(location);
+    if (
+      isVertical &&
+      locationValue && "[]".includes(locationValue)
+    ) {
+      if (locationValue === "[") {
+        locationsToPush.add(location.right(1).toString());
+      } else {
+        locationsToPush.add(location.left(1).toString());
+      }
+    }
   }
 
-  if (canPush) {
-    world.grid.set(destination, world.grid.get(location)!);
-    world.grid.set(location, ".");
-    if (location.equals(world.robot)) {
+  addLocationToPush(location);
+
+  for (const locationStringToPush of locationsToPush) {
+    const locationToPush = Location.fromString(locationStringToPush);
+    const destination = locationToPush.relative(direction, 1);
+    const destinationValue = world.grid.get(destination);
+    if (destinationValue && "O[]".includes(destinationValue)) {
+      addLocationToPush(destination);
+    } else if (destinationValue !== ".") {
+      return;
+    }
+  }
+
+  const locationsToPushReversed = Array.from(locationsToPush)
+    .reverse()
+    .map((ls) => Location.fromString(ls));
+
+  for (const locationToPush of locationsToPushReversed) {
+    const destination = locationToPush.relative(direction, 1);
+    world.grid.set(destination, world.grid.get(locationToPush)!);
+    world.grid.set(locationToPush, ".");
+    if (locationToPush.equals(world.robot)) {
       world.robot = destination;
     }
-    return true;
   }
-  return false;
 }
 
 function step(world: World, direction: Direction) {
-  attemptPush(world, world.robot, direction);
+  push(world, world.robot, direction);
 }
 
-function run(problem: Problem) {
+function run(problem: Problem, log = false) {
+  if (log) {
+    console.log("Initial state:");
+    console.log(gridToString(problem.world.grid));
+    console.log();
+  }
+
   for (const direction of problem.instructions) {
+    if (log) {
+      console.log("Move:", direction);
+    }
     step(problem.world, direction);
+    if (log) {
+      console.log(gridToString(problem.world.grid));
+      console.log();
+    }
   }
 }
 
@@ -88,14 +126,42 @@ function part1(input: string): number {
     .reduce((a, b) => a + b, 0);
 }
 
-// function part2(input: string): number {
-//   const problem = parse(input);
-//   throw new Error("TODO");
-// }
+function parsePart2(input: string): Problem {
+  const [gridPart, instructionsPart] = input.trimEnd().split("\n\n");
+  const transformedGridPart = gridPart.replaceAll(/[#O\.@]/g, (c) => {
+    switch (c) {
+      case "#":
+        return "##";
+      case "O":
+        return "[]";
+      case ".":
+        return "..";
+      case "@":
+        return "@.";
+    }
+    throw new Error(`Invalid character: ${JSON.stringify(c)}`);
+  });
+  const grid = ArrayGrid.fromString(transformedGridPart);
+  const robot =
+    grid.valuesWithLocations().find(({ value }) => value === "@")!.location;
+  return {
+    world: { grid, robot },
+    instructions: parseInstructions(instructionsPart),
+  };
+}
+
+function part2(input: string): number {
+  const problem = parsePart2(input);
+  run(problem);
+  return problem.world.grid.valuesWithLocations()
+    .filter(({ value }) => value === "[")
+    .map(({ location }) => gpsCoordinate(location))
+    .reduce((a, b) => a + b, 0);
+}
 
 if (import.meta.main) {
   runPart(2024, 15, 1, part1);
-  // runPart(2024, 15, 2, part2);
+  runPart(2024, 15, 2, part2);
 }
 
 const TEST_INPUT = `\
@@ -140,6 +206,6 @@ Deno.test("part1", () => {
   assertEquals(part1(TEST_INPUT), 10092);
 });
 
-// Deno.test("part2", () => {
-//   assertEquals(part2(TEST_INPUT), 12);
-// });
+Deno.test("part2", () => {
+  assertEquals(part2(TEST_INPUT), 9021);
+});
