@@ -5,13 +5,22 @@ class Machine {
   registers: number[] = new Array(3).fill(0);
   instructionPointer = 0;
   halted = false;
-  program: number[];
+  program: ReadonlyArray<number>;
   output: number[] = [];
 
-  constructor(program: number[]) {
+  constructor(program: ReadonlyArray<number>) {
     this.instructionPointer = 0;
     this.halted = false;
     this.program = program;
+  }
+
+  clone(): Machine {
+    const clone = new Machine(this.program);
+    clone.registers = this.registers.slice();
+    clone.instructionPointer = this.instructionPointer;
+    clone.halted = this.halted;
+    clone.output = this.output.slice();
+    return clone;
   }
 
   outputString(): string {
@@ -28,7 +37,7 @@ class Machine {
       throw new Error("Invalid input");
     }
     const machine = new Machine(
-      m[4].split(",").map((s) => parseInt(s, 10)),
+      Object.freeze(m[4].split(",").map((s) => parseInt(s, 10))),
     );
     machine.registers[0] = parseInt(m[1], 10);
     machine.registers[1] = parseInt(m[2], 10);
@@ -53,13 +62,13 @@ class Machine {
   }
 
   runSteps(steps: number): void {
+    if (this.halted) {
+      return;
+    }
     for (let i = 0; i < steps; i++) {
-      if (this.halted) {
-        break;
-      }
       if (this.instructionPointer + 1 >= this.program.length) {
         this.halted = true;
-        break;
+        return;
       }
       const opcode = this.program[this.instructionPointer];
       const operand = this.program[this.instructionPointer + 1];
@@ -123,30 +132,33 @@ function part1(input: string): string {
   return machine.outputString();
 }
 
-function arrayEquals(a: number[], b: number[]): boolean {
-  if (a.length !== b.length) {
-    return false;
-  }
-  for (let i = 0; i < a.length; i++) {
-    if (a[i] !== b[i]) {
-      return false;
-    }
-  }
-  return true;
-}
-
 function part2(input: string): number {
   // TODO this function doesn't yet finish running on the real input in a
   // reasonable time.
+  const templateMachine = Machine.fromInput(input);
+  const expectedOutput = templateMachine.program;
   let i = 0;
-  while (true) {
-    const machine = Machine.fromInput(input);
-    machine.registers[0] = i;
-    machine.runUntilHalt();
-    if (arrayEquals(machine.output, machine.program)) {
-      return i;
+  tryValue: while (true) {
+    const machine = templateMachine.clone();
+    const iteration = i++;
+    machine.registers[0] = iteration;
+
+    let checkedOutputs = 0;
+    while (!machine.halted) {
+      machine.runSteps(2);
+      if (machine.output.length > expectedOutput.length) {
+        continue tryValue;
+      }
+      while (checkedOutputs < machine.output.length) {
+        if (machine.output[checkedOutputs] !== expectedOutput[checkedOutputs]) {
+          continue tryValue;
+        }
+        checkedOutputs++;
+      }
     }
-    i++;
+    if (machine.output.length === expectedOutput.length) {
+      return iteration;
+    }
   }
 }
 
