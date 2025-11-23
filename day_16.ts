@@ -2,7 +2,11 @@ import { assertEquals } from "@std/assert";
 import { runPart } from "@macil/aocd";
 import { Location } from "./grid/location.ts";
 import { CharacterGrid, FixedSizeGrid } from "./grid/grid.ts";
-import { aStar } from "lazy-pathfinding/directed/a_star";
+import {
+  aStar,
+  aStarBag,
+  AStarOptions,
+} from "lazy-pathfinding/directed/a_star";
 import { clockwise, counterclockwise, Direction } from "./grid/direction.ts";
 
 interface Maze {
@@ -28,16 +32,16 @@ function parse(input: string): Maze {
   return { grid, start, end };
 }
 
-function findMinScoreBetweenLocations(
+function manhattanDistance(a: Location, b: Location): number {
+  return Math.abs(a.row - b.row) + Math.abs(a.column - b.column);
+}
+
+function getAStarOptions(
   grid: FixedSizeGrid<string>,
   from: Location,
   to: Location,
-): number {
-  function manhattanDistance(a: Location, b: Location): number {
-    return Math.abs(a.row - b.row) + Math.abs(a.column - b.column);
-  }
-
-  const result = aStar<PathNode>({
+): AStarOptions<PathNode> {
+  return {
     start: {
       location: from,
       direction: "right",
@@ -66,8 +70,15 @@ function findMinScoreBetweenLocations(
     },
     success: (node) => node.location.equals(to),
     key: (node) => node.location.toString() + ":" + node.direction,
-  });
+  };
+}
 
+function findMinScoreBetweenLocations(
+  grid: FixedSizeGrid<string>,
+  from: Location,
+  to: Location,
+): number {
+  const result = aStar(getAStarOptions(grid, from, to));
   if (!result) {
     throw new Error("No path found");
   }
@@ -80,14 +91,34 @@ function part1(input: string): number {
   return findMinScoreBetweenLocations(maze.grid, maze.start, maze.end);
 }
 
-// function part2(input: string): number {
-//   const maze = parse(input);
-//   throw new Error("TODO");
-// }
+function countSquaresOnShortestPaths(
+  grid: FixedSizeGrid<string>,
+  from: Location,
+  to: Location,
+): number {
+  const allPathLocations = new Set<string>();
+
+  const result = aStarBag(getAStarOptions(grid, from, to));
+  if (result) {
+    const [paths] = result;
+    for (const nodeList of paths) {
+      for (const node of nodeList) {
+        allPathLocations.add(node.location.toString());
+      }
+    }
+  }
+
+  return allPathLocations.size;
+}
+
+function part2(input: string): number {
+  const maze = parse(input);
+  return countSquaresOnShortestPaths(maze.grid, maze.start, maze.end);
+}
 
 if (import.meta.main) {
   runPart(2024, 16, 1, part1);
-  // runPart(2024, 16, 2, part2);
+  runPart(2024, 16, 2, part2);
 }
 
 const TEST_INPUT = `\
@@ -133,6 +164,7 @@ Deno.test("part1", () => {
   assertEquals(part1(TEST_INPUT2), 11048);
 });
 
-// Deno.test("part2", () => {
-//   assertEquals(part2(TEST_INPUT), 12);
-// });
+Deno.test("part2", () => {
+  assertEquals(part2(TEST_INPUT), 45);
+  assertEquals(part2(TEST_INPUT2), 64);
+});
