@@ -75,9 +75,7 @@ class Machine {
       let didJump = false;
       switch (opcode) {
         case 0: { // `adv` (division)
-          this.registers[0] = Math.trunc(
-            this.registers[0] / 2 ** this.#evaluateComboOperand(operand),
-          );
+          this.registers[0] >>= this.#evaluateComboOperand(operand);
           break;
         }
         case 1: { // `bxl` (bitwise xor)
@@ -104,15 +102,13 @@ class Machine {
           break;
         }
         case 6: { // `bdv`
-          this.registers[1] = Math.trunc(
-            this.registers[0] / 2 ** this.#evaluateComboOperand(operand),
-          );
+          this.registers[1] = this.registers[0] >>
+            this.#evaluateComboOperand(operand);
           break;
         }
         case 7: { // `cdv`
-          this.registers[2] = Math.trunc(
-            this.registers[0] / 2 ** this.#evaluateComboOperand(operand),
-          );
+          this.registers[2] = this.registers[0] >>
+            this.#evaluateComboOperand(operand);
           break;
         }
         default: {
