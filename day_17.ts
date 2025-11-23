@@ -123,10 +123,32 @@ function part1(input: string): string {
   return machine.outputString();
 }
 
-// function part2(input: string): string {
-//   const items = parse(input);
-//   throw new Error("TODO");
-// }
+function arrayEquals(a: number[], b: number[]): boolean {
+  if (a.length !== b.length) {
+    return false;
+  }
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function part2(input: string): number {
+  // TODO this function doesn't yet finish running on the real input in a
+  // reasonable time.
+  let i = 0;
+  while (true) {
+    const machine = Machine.fromInput(input);
+    machine.registers[0] = i;
+    machine.runUntilHalt();
+    if (arrayEquals(machine.output, machine.program)) {
+      return i;
+    }
+    i++;
+  }
+}
 
 if (import.meta.main) {
   runPart(2024, 17, 1, part1);
@@ -159,6 +181,15 @@ Deno.test("part1 test input", () => {
   assertEquals(part1(TEST_INPUT), "4,6,3,5,6,3,5,2,1,0");
 });
 
-// Deno.test("part2", () => {
-//   assertEquals(part2(TEST_INPUT), 12);
-// });
+Deno.test("part2", () => {
+  assertEquals(
+    part2(`\
+Register A: 2024
+Register B: 0
+Register C: 0
+
+Program: 0,3,5,4,3,0
+`),
+    117440,
+  );
+});
