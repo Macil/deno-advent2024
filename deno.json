@@ -12,7 +12,7 @@
     "@alexreardon/limit-once": "jsr:@alexreardon/limit-once@0.8.0",
     "@hugoalh/setation": "jsr:@hugoalh/setation@^2.0.0",
     "@macil/aocd": "jsr:@macil/aocd@^2.0.1",
-    "@macil/pathfinding": "jsr:@macil/pathfinding@^0.1.0",
+    "@macil/pathfinding": "jsr:@macil/pathfinding@^1.0.0",
     "@std/assert": "jsr:@std/assert@^1.0.6",
     "@std/collections": "jsr:@std/collections@^1.0.9",
     "big-cartesian": "npm:big-cartesian@^6.1.0",
