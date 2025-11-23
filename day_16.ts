@@ -6,7 +6,7 @@ import {
   aStar,
   aStarBag,
   AStarOptions,
-} from "lazy-pathfinding/directed/a_star";
+} from "@macil/pathfinding/directed/a_star";
 import { clockwise, counterclockwise, Direction } from "./grid/direction.ts";
 
 interface Maze {

@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
-import { dijkstraAll } from "lazy-pathfinding/directed/dijkstra";
-import { countPaths } from "lazy-pathfinding/directed/count_paths";
+import { dijkstraAll } from "@macil/pathfinding/directed/dijkstra";
+import { countPaths } from "@macil/pathfinding/directed/count_paths";
 import { runPart } from "@macil/aocd";
 import { ArrayGrid } from "./grid/grid.ts";
 import { orthogonalNeighbors } from "./grid/vector.ts";
