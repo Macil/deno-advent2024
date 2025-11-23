@@ -75,7 +75,9 @@ class Machine {
       let didJump = false;
       switch (opcode) {
         case 0: { // `adv` (division)
-          this.registers[0] >>= this.#evaluateComboOperand(operand);
+          this.registers[0] = Math.trunc(
+            this.registers[0] / 2 ** this.#evaluateComboOperand(operand),
+          );
           break;
         }
         case 1: { // `bxl` (bitwise xor)
@@ -102,13 +104,15 @@ class Machine {
           break;
         }
         case 6: { // `bdv`
-          this.registers[1] = this.registers[0] >>
-            this.#evaluateComboOperand(operand);
+          this.registers[1] = Math.trunc(
+            this.registers[0] / 2 ** this.#evaluateComboOperand(operand),
+          );
           break;
         }
         case 7: { // `cdv`
-          this.registers[2] = this.registers[0] >>
-            this.#evaluateComboOperand(operand);
+          this.registers[2] = Math.trunc(
+            this.registers[0] / 2 ** this.#evaluateComboOperand(operand),
+          );
           break;
         }
         default: {
@@ -129,15 +133,30 @@ function part1(input: string): string {
 }
 
 function part2(input: string): number {
-  // TODO this function doesn't yet finish running on the real input in a
-  // reasonable time.
   const templateMachine = Machine.fromInput(input);
   const expectedOutput = templateMachine.program;
+
+  let knownBitPattern = 0;
+  let knownBitCount = 0;
+
   let i = 0;
+
+  function getNextValue(): number {
+    const knownBitMask = (1n << BigInt(knownBitCount)) - 1n;
+    if ((BigInt(i) & knownBitMask) !== BigInt(knownBitPattern)) {
+      i = Number(
+        ((BigInt(i) | knownBitMask) + 1n) |
+          BigInt(knownBitPattern),
+      );
+    }
+
+    return i++;
+  }
+
   tryValue: while (true) {
     const machine = templateMachine.clone();
-    const iteration = i++;
-    machine.registers[0] = iteration;
+    const value = getNextValue();
+    machine.registers[0] = value;
 
     let checkedOutputs = 0;
     while (!machine.halted) {
@@ -150,17 +169,28 @@ function part2(input: string): number {
           continue tryValue;
         }
         checkedOutputs++;
+        if (checkedOutputs * 3 > knownBitCount + 7) {
+          knownBitCount += 3;
+          knownBitPattern = Number(
+            BigInt(value) & ((1n << BigInt(knownBitCount)) - 1n),
+          );
+          // console.log(
+          //   `Known bits: ${knownBitCount} (value=${
+          //     knownBitPattern.toString(2).padStart(knownBitCount, "0")
+          //   })`,
+          // );
+        }
       }
     }
     if (machine.output.length === expectedOutput.length) {
-      return iteration;
+      return value;
     }
   }
 }
 
 if (import.meta.main) {
   runPart(2024, 17, 1, part1);
-  // runPart(2024, 17, 2, part2);
+  runPart(2024, 17, 2, part2);
 }
 
 const TEST_INPUT = `\
