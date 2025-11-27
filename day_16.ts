@@ -32,10 +32,6 @@ function parse(input: string): Maze {
   return { grid, start, end };
 }
 
-function manhattanDistance(a: Location, b: Location): number {
-  return Math.abs(a.row - b.row) + Math.abs(a.column - b.column);
-}
-
 function getAStarOptions(
   grid: FixedSizeGrid<string>,
   from: Location,
@@ -66,7 +62,7 @@ function getAStarOptions(
     },
     // TODO could factor in direction too
     heuristic(node) {
-      return manhattanDistance(node.location, to);
+      return node.location.subtract(to).l1Norm();
     },
     success: (node) => node.location.equals(to),
     key: (node) => node.location.toString() + ":" + node.direction,

@@ -81,6 +81,11 @@ export class Vector {
     }
   }
 
+  /** Calculates the L1 norm (Manhattan distance) of the vector */
+  l1Norm(): number {
+    return Math.abs(this.rows) + Math.abs(this.columns);
+  }
+
   equals(other: Vector): boolean {
     return this.rows === other.rows && this.columns === other.columns;
   }
