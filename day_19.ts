@@ -27,9 +27,8 @@ function makeAStarOptions(
     start: "",
     *successors(current) {
       for (const pattern of patterns) {
-        const next = current + pattern;
-        if (design.startsWith(next)) {
-          yield [next, pattern.length];
+        if (design.startsWith(pattern, current.length)) {
+          yield [current + pattern, pattern.length];
         }
       }
     },
