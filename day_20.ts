@@ -28,25 +28,6 @@ function countCheatsThatSaveAtLeast(
   map: Map,
   targetSaveTime: number,
 ): number {
-  // const noCheatResult = aStar<Location>({
-  //   start: map.start,
-  //   successors(location) {
-  //     return orthogonalNeighbors()
-  //       .map((neighbor): [Location, number] => [location.add(neighbor), 1])
-  //       .filter(([loc]) => {
-  //         const value = map.grid.get(loc);
-  //         return value !== undefined && value !== "#";
-  //       });
-  //   },
-  //   heuristic: (location) => location.subtract(map.end).l1Norm(),
-  //   success: (location) => location.equals(map.end),
-  //   key: (location) => location.toString(),
-  // });
-  // if (!noCheatResult) {
-  //   throw new Error("No path found");
-  // }
-  // const noCheatTime = noCheatResult[1];
-
   const forwardDijkstraAllResults = dijkstraAll<Location, number, string>({
     start: map.start,
     successors(location) {
