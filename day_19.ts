@@ -59,6 +59,9 @@ function countSolutions(design: string, patterns: string[]): number {
 }
 
 function part2(input: string): number {
+  // This doesn't complete in reasonable time for the full input. I believe it's
+  // because there are a very large number of paths and this code is iterating
+  // over all of them instead of calculating the count more directly.
   const setup = parse(input);
   return setup.designs
     .map((design) => countSolutions(design, setup.patterns))
