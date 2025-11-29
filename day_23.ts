@@ -75,22 +75,22 @@ function* getAllSetsOfMoreThanThreeConnectedNodes(
   /** Contains the nodes sorted and joined by ":" */
   const previouslyFoundSets = new Set<string>();
 
-  for (const connection of connections) {
-    const [a, b] = connection;
-
+  for (const [a, b] of connections) {
     const aConnections = graph.get(a)!;
     const bConnections = graph.get(b)!;
 
     const commonConnections = aConnections.intersection(bConnections);
     if (commonConnections.size < 2) continue;
     const commonConnectionsArray = Array.from(commonConnections);
-    for (let i = 0; i < commonConnectionsArray.length; i++) {
+    for (let i = 0; i < commonConnectionsArray.length - 1; i++) {
       const commonConnection = commonConnectionsArray[i];
       const commonConnectionConnections = graph.get(commonConnection)!;
       const restCommonConnections = commonConnectionsArray
         .slice(i + 1)
         .filter((connection) => commonConnectionConnections.has(connection))
         .sort();
+
+      if (restCommonConnections.length === 0) continue;
 
       const allRestCombinations = combinationCollection(
         new Map<number, Array<string | undefined>>(
