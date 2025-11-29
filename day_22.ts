@@ -5,18 +5,14 @@ function parse(input: string): number[] {
   return input.trimEnd().split("\n").map(Number);
 }
 
-function mix(a: number, b: number): number {
-  return a ^ b;
-}
-
-function prune(n: number): number {
-  return n & 0xffffff;
+function mixAndPrune(a: number, b: number): number {
+  return (a ^ b) & 0xffffff;
 }
 
 function evolve(value: number): number {
-  value = prune(mix(value, value * 64));
-  value = prune(mix(value, Math.floor(value / 32)));
-  value = prune(mix(value, value * 2048));
+  value = mixAndPrune(value, value << 6);
+  value = mixAndPrune(value, value >>> 5);
+  value = mixAndPrune(value, value << 11);
   return value;
 }
 
@@ -51,10 +47,6 @@ const TEST_INPUT = `\
 100
 2024
 `;
-
-Deno.test("prune", () => {
-  assertEquals(prune(100000000), 16113920);
-});
 
 Deno.test("evolve", () => {
   assertEquals(evolve(123), 15887950);
