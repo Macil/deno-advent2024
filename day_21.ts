@@ -63,6 +63,9 @@ function calculcateShortestButtonSequence(code: string): number {
       ),
     },
     *successors(current) {
+      // TODO optimize by not considering moves that lead away from next needed
+      // key
+
       function* getNodesFromButtonBeingPressed(
         directionalKeypadIndex: number,
       ): Generator<[PathNode, number]> {
