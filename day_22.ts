@@ -1,5 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { runPart } from "@macil/aocd";
+import { slidingWindows } from "./lib/slidingWindows.ts";
+import { maxBy } from "@std/collections/max-by";
 
 function parse(input: string): number[] {
   return input.trimEnd().split("\n").map(Number);
@@ -31,14 +33,54 @@ function part1(input: string): number {
     .reduce((sum, v) => sum + v, 0);
 }
 
-// function part2(input: string): number {
-//   const items = parse(input);
-//   throw new Error("TODO");
-// }
+function* getPrices(secret: number): Generator<number> {
+  let currentSecret = secret;
+  while (true) {
+    yield currentSecret % 10;
+    currentSecret = evolve(currentSecret);
+  }
+}
+
+function part2(input: string): number {
+  const buyers = parse(input);
+
+  const bananasSoldByChangeSequence = new Map<string, number>();
+  for (const buyer of buyers) {
+    const sequencesSold = new Set<string>();
+
+    const pricesWithChange = slidingWindows(getPrices(buyer), 2)
+      .take(2000)
+      .map(([previousPrice, price]) => ({
+        price,
+        change: price - previousPrice,
+      }));
+    const pricesWithPast4Changes = slidingWindows(pricesWithChange, 4)
+      .map((window) => ({
+        price: window.at(-1)!.price,
+        past4Changes: window.map(({ change }) => change).join(","),
+      }));
+    for (const { price, past4Changes } of pricesWithPast4Changes) {
+      if (sequencesSold.has(past4Changes)) {
+        continue;
+      }
+      sequencesSold.add(past4Changes);
+      bananasSoldByChangeSequence.set(
+        past4Changes,
+        (bananasSoldByChangeSequence.get(past4Changes) ?? 0) + price,
+      );
+    }
+  }
+
+  const maxBananasSold = maxBy(
+    bananasSoldByChangeSequence.entries(),
+    ([, bananasSold]) => bananasSold,
+  )!;
+  return maxBananasSold[1];
+}
 
 if (import.meta.main) {
   runPart(2024, 22, 1, part1);
-  // runPart(2024, 22, 2, part2);
+  runPart(2024, 22, 2, part2);
 }
 
 const TEST_INPUT = `\
@@ -60,6 +102,34 @@ Deno.test("part1", () => {
   assertEquals(part1(TEST_INPUT), 37327623);
 });
 
-// Deno.test("part2", () => {
-//   assertEquals(part2(TEST_INPUT), 12);
-// });
+Deno.test("getPrices", () => {
+  assertEquals(
+    Array.from(getPrices(123).take(10)),
+    [3, 0, 6, 5, 4, 4, 6, 4, 4, 2],
+  );
+});
+
+Deno.test("expected price changes", () => {
+  assertEquals(
+    Array.from(
+      slidingWindows(
+        getPrices(123).take(10),
+        2,
+      )
+        .map(([previous, current]) => current - previous),
+    ),
+    [-3, 6, -1, -1, 0, 2, -2, 0, -2],
+  );
+});
+
+Deno.test("part2", () => {
+  assertEquals(
+    part2(`\
+1
+2
+3
+2024
+`),
+    23,
+  );
+});
