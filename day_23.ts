@@ -1,5 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { runPart } from "@macil/aocd";
+import { combinationCollection } from "@hugoalh/setation/collection";
+import { maxBy } from "@std/collections/max-by";
 
 function parse(input: string): Array<[string, string]> {
   return input.trimEnd().split("\n")
@@ -33,10 +35,8 @@ function* getAllSetsOfThreeConnectedNodes(
 ): Generator<string[]> {
   const graph = buildGraph(connections);
 
+  /** Contains the three nodes sorted and joined by ":" */
   const previouslyFoundSets = new Set<string>();
-  function getPreviouslyFoundKey(a: string, b: string, c: string): string {
-    return [a, b, c].sort().join(":");
-  }
 
   for (const connection of connections) {
     const [a, b] = connection;
@@ -46,12 +46,15 @@ function* getAllSetsOfThreeConnectedNodes(
 
     const commonConnections = aConnections.intersection(bConnections);
     for (const commonConnection of commonConnections) {
-      const key = getPreviouslyFoundKey(a, b, commonConnection);
+      const sortedConnection = [a, b, commonConnection].sort();
+
+      const key = sortedConnection.join(":");
       if (previouslyFoundSets.has(key)) {
         continue;
       }
       previouslyFoundSets.add(key);
-      yield [a, b, commonConnection];
+
+      yield sortedConnection;
     }
   }
 }
@@ -64,14 +67,88 @@ function part1(input: string): number {
     .reduce((count) => count + 1, 0);
 }
 
-// function part2(input: string): number {
-//   const items = parse(input);
-//   throw new Error("TODO");
-// }
+function* getAllSetsOfMoreThanThreeConnectedNodes(
+  connections: Array<[string, string]>,
+): Generator<string[]> {
+  const graph = buildGraph(connections);
+
+  /** Contains the nodes sorted and joined by ":" */
+  const previouslyFoundSets = new Set<string>();
+
+  for (const connection of connections) {
+    const [a, b] = connection;
+
+    const aConnections = graph.get(a)!;
+    const bConnections = graph.get(b)!;
+
+    const commonConnections = aConnections.intersection(bConnections);
+    if (commonConnections.size < 2) continue;
+    const commonConnectionsArray = Array.from(commonConnections);
+    for (let i = 0; i < commonConnectionsArray.length; i++) {
+      const commonConnection = commonConnectionsArray[i];
+      const commonConnectionConnections = graph.get(commonConnection)!;
+      const restCommonConnections = commonConnectionsArray
+        .slice(i + 1)
+        .filter((connection) => commonConnectionConnections.has(connection))
+        .sort();
+
+      const allRestCombinations = combinationCollection(
+        new Map<number, Array<string | undefined>>(
+          restCommonConnections.map((c, index) => [index, [undefined, c]]),
+        ),
+      );
+      for (const combination of allRestCombinations) {
+        const selectedConnections = combination.values()
+          .filter((c) => c !== undefined)
+          .toArray();
+        if (selectedConnections.length === 0) continue;
+
+        // We already know each of selectedCombinations is connected to `a`, `b`, and `commonConnection`.
+        // We just need to check they are connected to each other.
+        const allConnected = selectedConnections
+          .every((connA, indexA) =>
+            selectedConnections
+              .every((connB, indexB) => {
+                if (indexA === indexB) return true;
+                const connAConnections = graph.get(connA!)!;
+                return connAConnections.has(connB!);
+              })
+          );
+        if (allConnected) {
+          const sortedConnection = [
+            a,
+            b,
+            commonConnection,
+            ...selectedConnections,
+          ].sort();
+          const key = sortedConnection.join(":");
+          if (previouslyFoundSets.has(key)) {
+            continue;
+          }
+          previouslyFoundSets.add(key);
+          yield sortedConnection;
+        }
+      }
+    }
+  }
+}
+
+function part2(input: string): string {
+  const connections = parse(input);
+
+  const result = maxBy(
+    getAllSetsOfMoreThanThreeConnectedNodes(connections),
+    (set) => set.length,
+  );
+  if (!result) {
+    throw new Error("No result found");
+  }
+  return result.join(",");
+}
 
 if (import.meta.main) {
   runPart(2024, 23, 1, part1);
-  // runPart(2024, 23, 2, part2);
+  runPart(2024, 23, 2, part2);
 }
 
 const TEST_INPUT = `\
@@ -113,6 +190,6 @@ Deno.test("part1", () => {
   assertEquals(part1(TEST_INPUT), 7);
 });
 
-// Deno.test("part2", () => {
-//   assertEquals(part2(TEST_INPUT), 12);
-// });
+Deno.test("part2", () => {
+  assertEquals(part2(TEST_INPUT), "co,de,ka,ta");
+});
