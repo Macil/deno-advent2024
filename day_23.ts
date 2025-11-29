@@ -106,14 +106,12 @@ function* getAllSetsOfMoreThanThreeConnectedNodes(
         // We already know each of selectedCombinations is connected to `a`, `b`, and `commonConnection`.
         // We just need to check they are connected to each other.
         const allConnected = selectedConnections
-          .every((connA, indexA) =>
-            selectedConnections
-              .every((connB, indexB) => {
-                if (indexA === indexB) return true;
-                const connAConnections = graph.get(connA!)!;
-                return connAConnections.has(connB!);
-              })
-          );
+          .every((connA, indexA) => {
+            const connAConnections = graph.get(connA)!;
+            return selectedConnections
+              .slice(indexA + 1)
+              .every((connB) => connAConnections.has(connB));
+          });
         if (allConnected) {
           const sortedConnection = [
             a,
