@@ -1,6 +1,5 @@
 import { assertEquals } from "@std/assert";
 import { runPart } from "@macil/aocd";
-import { combinationCollection } from "@hugoalh/setation/collection";
 import { maxBy } from "@std/collections/max-by";
 
 function parse(input: string): Array<[string, string]> {
@@ -32,15 +31,12 @@ function buildGraph(
 
 function* getAllSetsOfThreeConnectedNodes(
   connections: Array<[string, string]>,
+  graph = buildGraph(connections),
 ): Generator<string[]> {
-  const graph = buildGraph(connections);
-
   /** Contains the three nodes sorted and joined by ":" */
   const previouslyFoundSets = new Set<string>();
 
-  for (const connection of connections) {
-    const [a, b] = connection;
-
+  for (const [a, b] of connections) {
     const aConnections = graph.get(a)!;
     const bConnections = graph.get(b)!;
 
@@ -67,67 +63,42 @@ function part1(input: string): number {
     .reduce((count) => count + 1, 0);
 }
 
-function* getAllSetsOfMoreThanThreeConnectedNodes(
+function* getAllSetsOfConnectedNodes(
   connections: Array<[string, string]>,
+  minSize = 4,
 ): Generator<string[]> {
   const graph = buildGraph(connections);
 
   /** Contains the nodes sorted and joined by ":" */
-  const previouslyFoundSets = new Set<string>();
+  const previouslyConsideredSets = new Set<string>();
 
-  for (const [a, b] of connections) {
-    const aConnections = graph.get(a)!;
-    const bConnections = graph.get(b)!;
-
-    const commonConnections = aConnections.intersection(bConnections);
-    if (commonConnections.size < 2) continue;
-    const commonConnectionsArray = Array.from(commonConnections);
-    for (let i = 0; i < commonConnectionsArray.length - 1; i++) {
-      const commonConnection = commonConnectionsArray[i];
-      const commonConnectionConnections = graph.get(commonConnection)!;
-      const restCommonConnections = commonConnectionsArray
-        .slice(i + 1)
-        .filter((connection) => commonConnectionConnections.has(connection))
-        .sort();
-
-      if (restCommonConnections.length === 0) continue;
-
-      const allRestCombinations = combinationCollection(
-        new Map<number, Array<string | undefined>>(
-          restCommonConnections.map((c, index) => [index, [undefined, c]]),
-        ),
-      );
-      for (const combination of allRestCombinations) {
-        const selectedConnections = combination.values()
-          .filter((c) => c !== undefined)
-          .toArray();
-        if (selectedConnections.length === 0) continue;
-
-        // We already know each of selectedCombinations is connected to `a`, `b`, and `commonConnection`.
-        // We just need to check they are connected to each other.
-        const allConnected = selectedConnections
-          .every((connA, indexA) => {
-            const connAConnections = graph.get(connA)!;
-            return selectedConnections
-              .slice(indexA + 1)
-              .every((connB) => connAConnections.has(connB));
-          });
-        if (allConnected) {
-          const sortedConnection = [
-            a,
-            b,
-            commonConnection,
-            ...selectedConnections,
-          ].sort();
-          const key = sortedConnection.join(":");
-          if (previouslyFoundSets.has(key)) {
-            continue;
-          }
-          previouslyFoundSets.add(key);
-          yield sortedConnection;
+  function* search(
+    sortedCandidate: string[],
+    commonConnections = sortedCandidate
+      .map((node) => graph.get(node)!)
+      .reduce((a, b) => a.intersection(b)),
+  ): Generator<string[]> {
+    if (commonConnections.size === 0) {
+      if (sortedCandidate.length >= minSize) {
+        yield sortedCandidate;
+      }
+    } else {
+      for (const commonConnection of commonConnections) {
+        const newCandidate = [...sortedCandidate, commonConnection].sort();
+        const newCommonConnections = commonConnections
+          .intersection(graph.get(commonConnection)!);
+        const key = newCandidate.join(":");
+        if (previouslyConsideredSets.has(key)) {
+          continue;
         }
+        previouslyConsideredSets.add(key);
+        yield* search(newCandidate, newCommonConnections);
       }
     }
+  }
+
+  for (const threeSet of getAllSetsOfThreeConnectedNodes(connections, graph)) {
+    yield* search(threeSet);
   }
 }
 
@@ -135,7 +106,7 @@ function part2(input: string): string {
   const connections = parse(input);
 
   const result = maxBy(
-    getAllSetsOfMoreThanThreeConnectedNodes(connections),
+    getAllSetsOfConnectedNodes(connections),
     (set) => set.length,
   );
   if (!result) {
