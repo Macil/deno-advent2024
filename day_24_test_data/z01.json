@@ -1,0 +1,38 @@
+{
+  "type": "operation",
+  "gate": "XOR",
+  "inputs": [
+    {
+      "type": "operation",
+      "gate": "XOR",
+      "inputs": [
+        {
+          "type": "inputBit",
+          "input": "y",
+          "bitIndex": 1
+        },
+        {
+          "type": "inputBit",
+          "input": "x",
+          "bitIndex": 1
+        }
+      ]
+    },
+    {
+      "type": "operation",
+      "gate": "AND",
+      "inputs": [
+        {
+          "type": "inputBit",
+          "input": "y",
+          "bitIndex": 0
+        },
+        {
+          "type": "inputBit",
+          "input": "x",
+          "bitIndex": 0
+        }
+      ]
+    }
+  ]
+}
