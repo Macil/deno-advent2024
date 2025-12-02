@@ -10,6 +10,7 @@
   },
   "imports": {
     "@alexreardon/limit-once": "jsr:@alexreardon/limit-once@0.8.0",
+    "@hugoalh/range-iterator": "jsr:@hugoalh/range-iterator@^3.0.0",
     "@hugoalh/setation": "jsr:@hugoalh/setation@^2.0.1",
     "@macil/aocd": "jsr:@macil/aocd@^2.0.3",
     "@macil/pathfinding": "jsr:@macil/pathfinding@^1.1.1",
