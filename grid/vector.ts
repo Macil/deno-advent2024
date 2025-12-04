@@ -1,5 +1,5 @@
 import { once } from "@alexreardon/limit-once";
-import { Direction } from "./direction.ts";
+import type { Direction } from "./direction.ts";
 // deno-lint-ignore no-unused-vars
 import type { Location } from "./location.ts";
 import { Rotation } from "./rotation.ts";

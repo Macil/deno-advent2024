@@ -1,4 +1,4 @@
-import { Direction } from "./direction.ts";
+import type { Direction } from "./direction.ts";
 import { Vector } from "./vector.ts";
 
 /**
