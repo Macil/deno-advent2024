@@ -41,7 +41,8 @@ export class Location {
   }
 
   equals(other: Location): boolean {
-    return this.row === other.row && this.column === other.column;
+    return this === other ||
+      (this.row === other.row && this.column === other.column);
   }
 
   static fromString(input: string): Location {

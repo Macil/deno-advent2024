@@ -87,7 +87,8 @@ export class Vector {
   }
 
   equals(other: Vector): boolean {
-    return this.rows === other.rows && this.columns === other.columns;
+    return this === other ||
+      (this.rows === other.rows && this.columns === other.columns);
   }
 
   clone(): Vector {
