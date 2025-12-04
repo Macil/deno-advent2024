@@ -45,7 +45,11 @@ export class Location {
   }
 
   static fromString(input: string): Location {
-    const [row, column] = input.split(",").map(Number);
+    const inputParts = input.split(",");
+    if (inputParts.length !== 2) {
+      throw new Error(`Invalid location string: ${input}`);
+    }
+    const [row, column] = inputParts.map(Number);
     return new Location(row, column);
   }
 
