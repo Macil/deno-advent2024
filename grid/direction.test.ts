@@ -4,5 +4,5 @@ import { Rotation } from "./rotation.ts";
 
 Deno.test("rotationTo", () => {
   assertEquals(rotationTo("up", "right"), Rotation.Clockwise);
-  assertEquals(rotationTo("right", "up"), Rotation.Counterclockwise);
+  assertEquals(rotationTo("right", "up"), Rotation.CounterClockwise);
 });

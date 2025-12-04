@@ -38,7 +38,7 @@ export function clockwise(direction: Direction): Direction {
   }
 }
 
-export function counterclockwise(direction: Direction): Direction {
+export function counterClockwise(direction: Direction): Direction {
   switch (direction) {
     case "up":
       return "left";
@@ -59,8 +59,8 @@ export function rotate(direction: Direction, rotation: Rotation): Direction {
       return clockwise(direction);
     case Rotation.Flip:
       return reverse(direction);
-    case Rotation.Counterclockwise:
-      return counterclockwise(direction);
+    case Rotation.CounterClockwise:
+      return counterClockwise(direction);
   }
 }
 
@@ -74,7 +74,7 @@ function directionAsRotation(direction: Direction): Rotation {
     case "down":
       return Rotation.Flip;
     case "left":
-      return Rotation.Counterclockwise;
+      return Rotation.CounterClockwise;
   }
 }
 

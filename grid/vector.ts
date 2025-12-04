@@ -64,7 +64,7 @@ export class Vector {
     return new Vector(this.columns, -this.rows);
   }
 
-  counterclockwise(): Vector {
+  counterClockwise(): Vector {
     return new Vector(-this.columns, this.rows);
   }
 
@@ -76,8 +76,8 @@ export class Vector {
         return this.clockwise();
       case Rotation.Flip:
         return this.reverse();
-      case Rotation.Counterclockwise:
-        return this.counterclockwise();
+      case Rotation.CounterClockwise:
+        return this.counterClockwise();
     }
   }
 

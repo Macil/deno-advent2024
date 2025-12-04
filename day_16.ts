@@ -7,7 +7,7 @@ import {
   aStarBag,
   AStarOptions,
 } from "@macil/pathfinding/directed/a_star";
-import { clockwise, counterclockwise, Direction } from "./grid/direction.ts";
+import { clockwise, counterClockwise, Direction } from "./grid/direction.ts";
 
 interface Maze {
   grid: CharacterGrid;
@@ -57,7 +57,7 @@ function getAStarOptions(
       }, 1000];
       yield [{
         location: node.location,
-        direction: counterclockwise(node.direction),
+        direction: counterClockwise(node.direction),
       }, 1000];
     },
     // TODO could factor in direction too

@@ -2,7 +2,7 @@ export enum Rotation {
   None = 0,
   Clockwise = 1,
   Flip = 2,
-  Counterclockwise = 3,
+  CounterClockwise = 3,
 }
 
 export function rotationToString(
@@ -15,8 +15,8 @@ export function rotationToString(
       return "Clockwise";
     case Rotation.Flip:
       return "Flip";
-    case Rotation.Counterclockwise:
-      return "Counterclockwise";
+    case Rotation.CounterClockwise:
+      return "CounterClockwise";
   }
 }
 
@@ -25,10 +25,10 @@ export function reverseRotation(rotation: Rotation): Rotation {
     case Rotation.None:
       return Rotation.None;
     case Rotation.Clockwise:
-      return Rotation.Counterclockwise;
+      return Rotation.CounterClockwise;
     case Rotation.Flip:
       return Rotation.Flip;
-    case Rotation.Counterclockwise:
+    case Rotation.CounterClockwise:
       return Rotation.Clockwise;
   }
 }

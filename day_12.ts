@@ -75,7 +75,7 @@ function countRegionSides(grid: Grid<string>, region: Region): number {
           sides++;
 
           for (
-            const sideVector of [vector.clockwise(), vector.counterclockwise()]
+            const sideVector of [vector.clockwise(), vector.counterClockwise()]
           ) {
             for (
               let sideNeighbor = location.add(sideVector);
