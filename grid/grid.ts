@@ -23,6 +23,12 @@ export abstract class FixedSizeGrid<T> implements Grid<T> {
   >;
 
   isInBounds(location: Location): boolean {
+    if (
+      Math.trunc(location.row) !== location.row ||
+      Math.trunc(location.column) !== location.column
+    ) {
+      return false;
+    }
     if (location.row < 0 || location.row >= this.dimensions.rows) {
       return false;
     }
@@ -34,15 +40,15 @@ export abstract class FixedSizeGrid<T> implements Grid<T> {
 
   boundsCheck(location: Location): void {
     if (!this.isInBounds(location)) {
-      throw new Error("Location out of bounds");
+      throw new Error(`Location is out of bounds: ${location}`);
     }
   }
 }
 
 export class CharacterGrid extends FixedSizeGrid<string> {
-  readonly #lines: Array<string>;
+  readonly #lines: ReadonlyArray<string>;
 
-  constructor(dimensions: Vector, lines: Array<string>) {
+  constructor(dimensions: Vector, lines: ReadonlyArray<string>) {
     super(dimensions);
     this.#lines = lines;
   }
