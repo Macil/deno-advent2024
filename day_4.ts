@@ -1,7 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { runPart } from "@macil/aocd";
-import { CharacterGrid } from "./grid/grid.ts";
-import { allNeighbors, Vector } from "./grid/vector.ts";
+import { allNeighbors, CharacterGrid, Vector } from "@macil/grid";
 
 function part1(input: string): number {
   const grid = CharacterGrid.fromString(input);

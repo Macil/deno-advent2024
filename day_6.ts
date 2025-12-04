@@ -1,8 +1,13 @@
 import { assertEquals } from "@std/assert";
 import { runPart } from "@macil/aocd";
-import { ArrayGrid, CharacterGrid, FixedSizeGrid, Grid } from "./grid/grid.ts";
-import { Location } from "./grid/location.ts";
-import { clockwise, Direction } from "./grid/direction.ts";
+import {
+  ArrayGrid,
+  CharacterGrid,
+  FixedSizeGrid,
+  Grid,
+  Location,
+} from "@macil/grid";
+import { clockwise, Direction } from "@macil/grid/direction";
 
 function* guardLocations(
   grid: FixedSizeGrid<string>,

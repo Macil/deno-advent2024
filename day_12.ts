@@ -1,8 +1,12 @@
 import { assertEquals } from "@std/assert";
 import { runPart } from "@macil/aocd";
-import { CharacterGrid, Grid } from "./grid/grid.ts";
-import { Location } from "./grid/location.ts";
-import { orthogonalNeighbors, Vector } from "./grid/vector.ts";
+import {
+  CharacterGrid,
+  Grid,
+  Location,
+  orthogonalNeighbors,
+  Vector,
+} from "@macil/grid";
 
 interface Region {
   value: string;

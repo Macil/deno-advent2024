@@ -1,6 +1,7 @@
 {
   "version": "5",
   "specifiers": {
+    "jsr:@alexreardon/limit-once@0.8": "0.8.0",
     "jsr:@alexreardon/limit-once@0.8.0": "0.8.0",
     "jsr:@cliffy/command@1.0.0-rc.8": "1.0.0-rc.8",
     "jsr:@cliffy/flags@1.0.0-rc.8": "1.0.0-rc.8",
@@ -15,6 +16,7 @@
     "jsr:@hugoalh/setation@^2.0.1": "2.0.1",
     "jsr:@korkje/memz@0.2.1": "0.2.1",
     "jsr:@macil/aocd@^2.0.3": "2.0.3",
+    "jsr:@macil/grid@~0.1.1": "0.1.1",
     "jsr:@macil/pathfinding@^1.1.1": "1.1.1",
     "jsr:@std/assert@^1.0.16": "1.0.16",
     "jsr:@std/cli@^1.0.6": "1.0.24",
@@ -102,6 +104,12 @@
         "jsr:@korkje/memz",
         "jsr:@std/cli",
         "jsr:@std/path"
+      ]
+    },
+    "@macil/grid@0.1.1": {
+      "integrity": "04ff8cda82cdcccd8b85fb3f55b22f8b05e34f9e291e51d3d920df4b6480bef3",
+      "dependencies": [
+        "jsr:@alexreardon/limit-once@0.8"
       ]
     },
     "@macil/pathfinding@1.1.1": {
@@ -206,6 +214,7 @@
       "jsr:@hugoalh/range-iterator@3",
       "jsr:@hugoalh/setation@^2.0.1",
       "jsr:@macil/aocd@^2.0.3",
+      "jsr:@macil/grid@~0.1.1",
       "jsr:@macil/pathfinding@^1.1.1",
       "jsr:@std/assert@^1.0.16",
       "jsr:@std/collections@^1.1.3",

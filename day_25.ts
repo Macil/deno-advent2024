@@ -1,7 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { runPart } from "@macil/aocd";
-import { CharacterGrid } from "./grid/grid.ts";
-import { Location } from "./grid/location.ts";
+import { CharacterGrid, Location } from "@macil/grid";
 import { rangeIterator } from "@hugoalh/range-iterator";
 
 interface Configuration {

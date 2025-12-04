@@ -1,11 +1,14 @@
 import { assertEquals } from "@std/assert";
 import { runPart } from "@macil/aocd";
-import { CharacterGrid, FixedSizeGrid } from "./grid/grid.ts";
-import { Location } from "./grid/location.ts";
-import { orthogonalNeighbors } from "./grid/vector.ts";
+import {
+  CharacterGrid,
+  FixedSizeGrid,
+  Location,
+  orthogonalNeighbors,
+} from "@macil/grid";
+import { locationsInManhattanDistance } from "@macil/grid/locationsInManhattanDistance";
 import { dijkstraAll } from "@macil/pathfinding/directed/dijkstra";
 import { minBy } from "@std/collections/min-by";
-import { locationsInManhattanDistance } from "./grid/locationsInManhattanDistance.ts";
 
 interface Map {
   grid: FixedSizeGrid<string>;

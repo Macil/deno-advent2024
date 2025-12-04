@@ -1,8 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { runPart } from "@macil/aocd";
-import { Location } from "./grid/location.ts";
-import { ArrayGrid } from "./grid/grid.ts";
-import { orthogonalNeighbors, Vector } from "./grid/vector.ts";
+import { ArrayGrid, Location, orthogonalNeighbors, Vector } from "@macil/grid";
 import { aStar, AStarOptions } from "@macil/pathfinding/directed/a_star";
 
 function parse(input: string): Array<Location> {

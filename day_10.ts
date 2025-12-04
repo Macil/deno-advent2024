@@ -2,9 +2,7 @@ import { assertEquals } from "@std/assert";
 import { dijkstraAll } from "@macil/pathfinding/directed/dijkstra";
 import { countPaths } from "@macil/pathfinding/directed/count_paths";
 import { runPart } from "@macil/aocd";
-import { ArrayGrid } from "./grid/grid.ts";
-import { orthogonalNeighbors } from "./grid/vector.ts";
-import { Location } from "./grid/location.ts";
+import { ArrayGrid, Location, orthogonalNeighbors } from "@macil/grid";
 
 function parse(input: string): ArrayGrid<number | undefined> {
   const data = input.trimEnd().split("\n").map((line) =>

@@ -2,8 +2,7 @@ import { assertEquals } from "@std/assert";
 import { mapEntries } from "@std/collections/map-entries";
 import { permutationSet } from "@hugoalh/setation/set";
 import { runPart } from "@macil/aocd";
-import { CharacterGrid } from "./grid/grid.ts";
-import { Location } from "./grid/location.ts";
+import { CharacterGrid, Location } from "@macil/grid";
 
 function part1(input: string): number {
   const grid = CharacterGrid.fromString(input);

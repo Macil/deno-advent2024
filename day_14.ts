@@ -1,8 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { getAocd, runPart } from "@macil/aocd";
-import { Location } from "./grid/location.ts";
-import { Vector } from "./grid/vector.ts";
-import { ArrayGrid } from "./grid/grid.ts";
+import { ArrayGrid, Location, Vector } from "@macil/grid";
 import * as math from "mathjs";
 
 const defaultWorldDimensions = new Vector(103, 101);

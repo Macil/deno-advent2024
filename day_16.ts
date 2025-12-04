@@ -1,13 +1,12 @@
 import { assertEquals } from "@std/assert";
 import { runPart } from "@macil/aocd";
-import { Location } from "./grid/location.ts";
-import { CharacterGrid, FixedSizeGrid } from "./grid/grid.ts";
+import { CharacterGrid, FixedSizeGrid, Location } from "@macil/grid";
+import { clockwise, counterClockwise, Direction } from "@macil/grid/direction";
 import {
   aStar,
   aStarBag,
   AStarOptions,
 } from "@macil/pathfinding/directed/a_star";
-import { clockwise, counterClockwise, Direction } from "./grid/direction.ts";
 
 interface Maze {
   grid: CharacterGrid;

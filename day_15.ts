@@ -1,8 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { runPart } from "@macil/aocd";
-import { Location } from "./grid/location.ts";
-import { ArrayGrid, gridToString } from "./grid/grid.ts";
-import { Direction } from "./grid/direction.ts";
+import { ArrayGrid, Direction, gridToString, Location } from "@macil/grid";
 
 interface World {
   grid: ArrayGrid<string>;

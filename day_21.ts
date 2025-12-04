@@ -1,9 +1,12 @@
 import { assertEquals } from "@std/assert";
 import { runPart } from "@macil/aocd";
-import { CharacterGrid } from "./grid/grid.ts";
-import { Location } from "./grid/location.ts";
+import {
+  CharacterGrid,
+  Location,
+  orthogonalNeighbors,
+  Vector,
+} from "@macil/grid";
 import { aStar } from "@macil/pathfinding/directed/a_star";
-import { orthogonalNeighbors, Vector } from "./grid/vector.ts";
 
 function parse(input: string): string[] {
   return input.trimEnd().split("\n");
