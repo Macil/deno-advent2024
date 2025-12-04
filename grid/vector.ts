@@ -4,7 +4,12 @@ import { Direction } from "./direction.ts";
 import type { Location } from "./location.ts";
 import { Rotation } from "./rotation.ts";
 
-/** A measurement of distance between two {@link Location}s */
+/**
+ * A measurement of distance between two {@link Location|Locations}.
+ *
+ * The rows represent vertical distance (positive is down) and the columns
+ * represent horizontal distance (positive is right).
+ */
 export class Vector {
   constructor(public rows: number, public columns: number) {}
 

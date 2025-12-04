@@ -1,7 +1,12 @@
 import { Direction } from "./direction.ts";
 import { Vector } from "./vector.ts";
 
-/** A location on a grid */
+/**
+ * A location on a grid.
+ *
+ * The row represents vertical position (positive is down) and the column
+ * represents horizontal position (positive is right).
+ */
 export class Location {
   constructor(public row: number, public column: number) {}
 
